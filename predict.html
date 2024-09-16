@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction - Prime Home Forecast</title>
+    <style>
+        
+        body, h1, h2, p, input, textarea, select, form {
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #0077cc;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            background-image: url('/static/pictures/background.jpg');
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 5px 10px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #005fa3;
+            border-radius: 5px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #0077cc;
+            color: #fff;
+            border: none;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #005fa3;
+            transform: scale(1.05);
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+
+     <h1>Prime Home Forecast</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/predict">Predict</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </nav>
+</header>
+
+<main>
+    <section class="container">
+        <h2>Enter Property Details</h2>
+        <form id="predictionForm">
+            <div class="form-group">
+                <label for="area">Area (acres):</label>
+                <input type="number" id="area" name="area" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="rooms">Number of Rooms:</label>
+                <input type="number" id="rooms" name="rooms" required>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <select id="location" name="location" required>
+                    <option value="Urban">Urban</option>
+                    <option value="Rural">Rural</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="amenities">Nearby Amenities:</label>
+                <select id="amenities" name="amenities" required>
+                    <option value="Near">Near</option>
+                    <option value="Far">Far</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="currentPrice">Current Price ($):</label>
+                <input type="number" id="currentPrice" name="currentPrice" step="0.01" required>
+            </div>
+
+            <button type="submit" class="btn">Get Prediction</button>
+        </form>
+
+        <div class="results" id="results"></div>
+    </section>
+</main>
+
+
+<script>
+    document.getElementById('predictionForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+    
+        const formData = new FormData(this);
+        const data = {
+            area: formData.get('area'),
+            rooms: formData.get('rooms'),
+            location: formData.get('location'),
+            amenities: formData.get('amenities'),
+            currentPrice: formData.get('currentPrice')
+        };
+    
+        fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            
+            document.getElementById('results').textContent = 'Predicted Price: $' + result.predicted_price.toFixed(2);
+        })
+        .catch(error => console.error('Error:', error));
+    });
+    </script>
+    
+
+</body>
+</html>
